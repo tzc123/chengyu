@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="idiom.json"></script>
+    <script>
+        const words = idiom.map(i => i.word).filter(i => i.length === 4);
+        console.log(words.length);
+        function genQuestion(order) {
+            const copyWords = [...words];
+            let randomIndex;
+            let resultWords = [];
+            let keywords = [];
+            let i = 0;
+            while(i <= order) {
+                const lastKeyword = keywords[keywords.length - 1];
+                if(lastKeyword) {
+                    const meetWords = copyWords.filter(word => word.includes(lastKeyword));
+                    if (meetWords.length === 0) {
+                        resultWords.pop();
+                        keywords.pop();
+                        continue;
+                    }
+                    const meetRandomIndex = Math.floor(Math.random() * meetWords.length);
+                    const meetWord = meetWords[meetRandomIndex];
+                    resultWords.push(meetWord);
+                    if (order > i) {
+                        const wordIndexs = [0, 1, 2, 3];
+                        const lastKeywordIndex = meetWord.indexOf(lastKeyword);
+                        wordIndexs.splice(lastKeywordIndex, 1);
+                        const newKeyword = meetWord[wordIndexs[Math.floor(Math.random() * wordIndexs.length)]];
+                        keywords.push(newKeyword);
+                    }
+                } else {
+                    randomIndex = Math.floor(Math.random() * copyWords.length);
+                    resultWords.push(copyWords[randomIndex]);
+                    copyWords.splice(randomIndex, 1);
+                    keywords.push(resultWords[0][Math.floor(Math.random() * 4)]);
+                }
+                i++;
+            }
+            return { resultWords, keywords };
+        }
+        // setInterval(() => {
+        //     const result = genQuestion(5);
+        //     console.log(result.resultWords);
+        //     console.log(result.keywords);
+        //     console.log('');
+        // }, 1000)
+    </script>
+</body>
+</html>
